@@ -1,5 +1,6 @@
-**/META-INF/secure/*credentials.*
-**/safecontentflags/cache/
+!META-INF/*
+META-INF/secure/*
+safecontentflags/*
 
 nbproject/
 target/
