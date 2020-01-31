@@ -49,7 +49,7 @@ Use the created service instance to flag content
 
 - For complete list of standard flags see the:
 
-[StandardFlags interface](../master/src/main/java/com/bc/safecontent/StandardFlags.java)
+[StandardFlags interface](../blob/master/src/main/java/com/bc/safecontent/StandardFlags.java)
 
 ### Configuration
 
