@@ -38,7 +38,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 22, 2018 5:02:51 AM
  */
-public class SafeContentServiceImpl implements SafeContentService {
+public final class SafeContentServiceImpl implements SafeContentService {
 
     private transient static final Logger LOG = Logger.getLogger(SafeContentServiceImpl.class.getName());
 
@@ -113,37 +113,48 @@ public class SafeContentServiceImpl implements SafeContentService {
     }
 
     @Override
+    public String requestFlags(String... text) {
+        
+        return this.requestFlags(null, text);
+    }
+    
+    @Override
     public String requestFlags(String imageurl, String... text) {
         final StringBuilder builder = new StringBuilder();
         this.appendFlags(builder, imageurl, text);
         return builder.toString();
     }
     
+    @Override
+    public void appendFlags(StringBuilder appenndTo, String...text) {
+        
+        this.appendFlags(appenndTo, null, text);
+    }
     
     @Override
-    public void appendFlags(StringBuilder result, String imageurl, String...text) {
+    public void appendFlags(StringBuilder appendTo, String imageurl, String...text) {
         
         if(imageurl != null && !imageurl.isEmpty()) {
-            this.appendGoogleSafeSearchFlags(result, null, StandardFlags.IMAGE_SUFFIX, imageurl);
+            this.appendGoogleSafeSearchFlags(appendTo, null, StandardFlags.IMAGE_SUFFIX, imageurl);
         }
             
         if(LOG.isLoggable(Level.FINER)) {
-            LOG.log(Level.FINER, "Google SafeSearch flags: {0}, url: {1}", new Object[]{result, imageurl});
+            LOG.log(Level.FINER, "Google SafeSearch flags: {0}, url: {1}", new Object[]{appendTo, imageurl});
         }
 
         if(text != null && text.length > 0) {
-            this.appendSafeTextFlags(result, null, StandardFlags.TEXT_SUFFIX, text);
+            this.appendSafeTextFlags(appendTo, null, StandardFlags.TEXT_SUFFIX, text);
         }
     }
 
-    public void appendGoogleSafeSearchFlags(StringBuilder builder, String prefix, String suffix, String imageurl) {
+    private void appendGoogleSafeSearchFlags(StringBuilder builder, String prefix, String suffix, String imageurl) {
         if(imageurl != null && ! imageurl.isEmpty()) {
             final Collector<String, StringBuilder> collector = new CollectIntoBuffer(builder, prefix, suffix);
             this.requestGoogleSafeSearchFlags(imageurl, collector);
         }
     }
     
-    public void requestGoogleSafeSearchFlags(String imageurl, Collector<String, StringBuilder> collector) {
+    private void requestGoogleSafeSearchFlags(String imageurl, Collector<String, StringBuilder> collector) {
         
         if(imageurl != null && ! imageurl.isEmpty()) {
             
@@ -173,14 +184,14 @@ public class SafeContentServiceImpl implements SafeContentService {
         }
     }
     
-    public void appendSafeTextFlags(StringBuilder builder, String prefix, String suffix, String [] text) {
+    private void appendSafeTextFlags(StringBuilder builder, String prefix, String suffix, String [] text) {
         if(text != null && text.length > 0) {
             final Collector<String, StringBuilder> collector = new CollectIntoBuffer(builder, prefix, suffix);
             this.appendSafeTextFlags(text, collector);
         }
     }
 
-    public void appendSafeTextFlags(String [] text, Collector<String, StringBuilder> collector) {
+    private void appendSafeTextFlags(String [] text, Collector<String, StringBuilder> collector) {
         
         if(text != null && text.length > 0) {
             final String [] flags = StandardFlags.ALL;

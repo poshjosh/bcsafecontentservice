@@ -21,7 +21,11 @@ package com.bc.safecontent.service;
  */
 public interface SafeContentService {
 
+    String requestFlags(String... text);
+    
     String requestFlags(String imageurl, String... text);
+    
+    void appendFlags(StringBuilder appendTo, String...text);
     
     void appendFlags(StringBuilder appendTo, String imageurl, String...text);
     
