@@ -21,6 +21,7 @@ import com.bc.safecontent.StandardFlags;
 import com.bc.safecontent.googlecloud.vision.SafeSearchService;
 import com.bc.safecontent.util.CollectIntoBuffer;
 import com.bc.safecontent.util.Collector;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -47,6 +48,9 @@ public class ContentFlaggingServiceImpl implements ContentFlaggingService{
     
     private final Set<Likelihood> unsafeLikelihoods;
     
+    private boolean shuttingDown;
+    private boolean shutdown;
+    
     public ContentFlaggingServiceImpl(
             SafeSearchService safeSearchService, SensitiveWords sensitiveWords) {
         
@@ -66,7 +70,6 @@ public class ContentFlaggingServiceImpl implements ContentFlaggingService{
         this.unsafeLikelihoods = Collections.unmodifiableSet(unsafeLikelihoods);
     }
     
-//    @Cacheable(value = "contentFlagCache", key="{#imageurls, #text}", sync=true)
     @Cacheable(value = "contentFlagCache", key="#content", sync=true)
     @Override
     public String flag(Content content, long timeoutMillis) {
@@ -77,12 +80,15 @@ public class ContentFlaggingServiceImpl implements ContentFlaggingService{
 
     @Override
     public State getState() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new StateImpl(this.shuttingDown, this.shutdown);
     }
 
     @Override
     public State shutdown() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.shuttingDown = true;
+        this.shutdown = true;
+        this.shuttingDown = false;
+        return this.getState();
     }
 
     private void appendFlags(StringBuilder appendTo, Content content, long timeoutMillis) {
@@ -182,32 +188,59 @@ public class ContentFlaggingServiceImpl implements ContentFlaggingService{
         }
         return result;
     }
-}
-/**
- * 
-    interface Content{
-        String getImageUrl();
-        String [] getText();
-    }
-    private static final class ContentImpl implements Content{
+    
+    private static final class StateImpl implements State, Serializable{
         
-        private final String imageUrl;
-        private final String [] text;
+        private final boolean shuttingDown;
+        private final boolean shutdown;
 
-        public ContentImpl(String imageUrl, String[] text) {
-            this.imageUrl = imageUrl;
-            this.text = text;
+        public StateImpl(boolean shuttingDown, boolean shutdown) {
+            this.shuttingDown = shuttingDown;
+            this.shutdown = shutdown;
         }
 
         @Override
-        public String getImageUrl() {
-            return imageUrl;
+        public boolean isShuttingDown() {
+            return shuttingDown;
         }
 
         @Override
-        public String[] getText() {
-            return text;
+        public boolean isShutdown() {
+            return shutdown;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 11 * hash + (this.shuttingDown ? 1 : 0);
+            hash = 11 * hash + (this.shutdown ? 1 : 0);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final StateImpl other = (StateImpl) obj;
+            if (this.shuttingDown != other.shuttingDown) {
+                return false;
+            }
+            if (this.shutdown != other.shutdown) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "StateImpl{" + "shuttingDown=" + shuttingDown + ", shutdown=" + shutdown + '}';
         }
     }
- * 
- */
+}
