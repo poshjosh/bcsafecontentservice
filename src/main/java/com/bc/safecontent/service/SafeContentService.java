@@ -18,25 +18,20 @@ package com.bc.safecontent.service;
 
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 22, 2018 5:28:27 AM
+ * @deprecated Rather use {@link com.bc.safecontent.service.ContentFlaggingService ContentFlaggingService}
+ * @see com.bc.safecontent.service.ContentFlaggingServiceImpl
  */
+@Deprecated
 public interface SafeContentService {
 
-    default String requestFlags(String... text) {
-        return this.requestFlags(null, text);
-    }
-    
-    default String requestFlags(String imageurl, String... text) {
-        final StringBuilder builder = new StringBuilder();
-        this.appendFlags(builder, imageurl, text);
-        return builder.toString();
-    }
-    
-    default void appendFlags(StringBuilder appenndTo, String...text) {
-        this.appendFlags(appenndTo, null, text);
-    }
-    
-    void appendFlags(StringBuilder appendTo, String imageurl, String...text);
-    
+    void appendFlags(StringBuilder appendTo, String imageurl, String... text);
+
+    void appendFlags(StringBuilder appenndTo, String... text);
+
+    String requestFlags(String imageurl, String... text);
+
+    String requestFlags(String... text);
+        
     boolean isShuttingDown();
 
     boolean isShutdown();

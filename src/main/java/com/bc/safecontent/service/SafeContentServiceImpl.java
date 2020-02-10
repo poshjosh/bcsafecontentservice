@@ -16,56 +16,47 @@
 
 package com.bc.safecontent.service;
 
-import com.bc.diskcache.DiskLruCacheIx;
 import com.bc.safecontent.util.CollectIntoBuffer;
 import com.bc.safecontent.util.Collector;
 import com.bc.safecontent.googlecloud.vision.SafeSearchService;
 import com.bc.safecontent.SensitiveWords;
 import com.bc.safecontent.Likelihood;
 import com.bc.safecontent.SensitiveWordsImpl;
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.bc.safecontent.StandardFlags;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 22, 2018 5:02:51 AM
+ * @deprecated Rather use {@link com.bc.safecontent.service.ContentFlaggingServiceImpl ContentFlaggingServiceImpl}
  */
+@Deprecated
 public final class SafeContentServiceImpl implements SafeContentService {
 
     private transient static final Logger LOG = Logger.getLogger(SafeContentServiceImpl.class.getName());
 
     private final SafeSearchService safeSearchService;
     
-    private final List<String> safeSearchLikelihoods;
+    private final Set<Likelihood> safeSearchLikelihoods;
     
     private final SensitiveWords sensitiveWords;
     
-    private final File cacheDir;
-    
-    private final int maxCacheSizeBytes;
-    
     private boolean shuttingDown;
     
-    public SafeContentServiceImpl(File cacheDir, int maxCacheSizeBytes) {
+    private boolean shutdown;
+    
+    public SafeContentServiceImpl() {
         
         this.safeSearchService = new SafeSearchService();
         
-        this.safeSearchLikelihoods = Arrays.asList(
-                Likelihood.POSSIBLE.name(), Likelihood.LIKELY.name(), Likelihood.VERY_LIKELY.name());
+        this.safeSearchLikelihoods = EnumSet.of(
+                Likelihood.POSSIBLE, Likelihood.LIKELY, Likelihood.VERY_LIKELY);
         
         this.sensitiveWords = this.createSensitiveWords();
-        
-        this.cacheDir = Objects.requireNonNull(cacheDir);
-        
-        this.maxCacheSizeBytes = maxCacheSizeBytes;
     }
     
     private SensitiveWords createSensitiveWords() {
@@ -84,7 +75,7 @@ public final class SafeContentServiceImpl implements SafeContentService {
 
     @Override
     public boolean isShutdown() {
-        return this.getCache().isClosed();
+        return this.shutdown;
     }
 
     @Override
@@ -94,21 +85,9 @@ public final class SafeContentServiceImpl implements SafeContentService {
         }
         try{
             this.shuttingDown = true;
-            final DiskLruCacheIx cache = this.getCache();
-            try{
-                cache.flush();
-            }catch(IOException e) {
-                LOG.log(Level.WARNING, "{0}", e);
-                LOG.log(Level.FINE, "Exception flushing Cache", e);
-            }
-            try{
-                cache.close();
-            }catch(IOException e) {
-                LOG.log(Level.WARNING, "{0}", e);
-                LOG.log(Level.FINE, "Exception closing Cache", e);
-            }
         }finally{
             this.shuttingDown = false;
+            this.shutdown = true;
         }
     }
 
@@ -133,13 +112,11 @@ public final class SafeContentServiceImpl implements SafeContentService {
     
     @Override
     public void appendFlags(StringBuilder appendTo, String imageurl, String...text) {
-        
         if(imageurl != null && !imageurl.isEmpty()) {
             this.appendGoogleSafeSearchFlags(appendTo, null, StandardFlags.IMAGE_SUFFIX, imageurl);
         }
-            
-        if(LOG.isLoggable(Level.FINER)) {
-            LOG.log(Level.FINER, "Google SafeSearch flags: {0}, url: {1}", new Object[]{appendTo, imageurl});
+        if(LOG.isLoggable(Level.FINEST)) {
+            LOG.log(Level.FINEST, "Google SafeSearch flags: {0}, url: {1}", new Object[]{appendTo, imageurl});
         }
 
         if(text != null && text.length > 0) {
@@ -158,27 +135,7 @@ public final class SafeContentServiceImpl implements SafeContentService {
         
         if(imageurl != null && ! imageurl.isEmpty()) {
             
-            final DiskLruCacheIx cache = this.getCache();
-
-            Map data = null;
-            try{
-                data = (Map)cache.getObject(imageurl, null);
-            }catch(IOException | ClassNotFoundException e) {
-                LOG.log(Level.WARNING, "{0}", e);
-                LOG.log(Level.FINE, "Exception retrieving from Cache. Value for key: " + imageurl, e);
-            }
-
-            if(data == null || data.isEmpty()) {
-                data = this.safeSearchService.requestAnnotation(imageurl);
-                if(data != null && !data.isEmpty()) {
-                    try{
-                        cache.putIfNone(imageurl, data);
-                    }catch(IOException e) {
-                        LOG.log(Level.WARNING, "{0}", e);
-                        LOG.log(Level.FINE, "Exception adding to Cache. Value for key: " + imageurl, e);
-                    }
-                }
-            }
+            final Map data = this.safeSearchService.requestAnnotation(imageurl);
 
             this.safeSearchService.collectFlags(data, safeSearchLikelihoods, collector);
         }
@@ -214,39 +171,12 @@ public final class SafeContentServiceImpl implements SafeContentService {
         if(text == null || text.isEmpty()) {
             result = false;
         }else{
-            result = this.sensitiveWords.matchesAny(text, new String[]{flag}, 
-                Likelihood.VERY_LIKELY, Likelihood.LIKELY, Likelihood.POSSIBLE);
-            if(LOG.isLoggable(Level.FINER)) {
-                LOG.log(Level.FINER, "Flag: {0}, text: {1}", 
+            result = this.sensitiveWords.matchesAny(text, new String[]{flag}, this.safeSearchLikelihoods);
+            if(LOG.isLoggable(Level.FINEST)) {
+                LOG.log(Level.FINEST, "Flag: {0}, text: {1}", 
                         new Object[]{(result ? flag.toLowerCase() : "none"), text});
             }    
         }
         return result;
-    }
-    
-    
-    private static final Lock CACHE_LOCK = new ReentrantLock();
-    private static DiskLruCacheIx _dc; 
-    public DiskLruCacheIx getCache() {
-        try{
-            CACHE_LOCK.lock();
-            if(_dc == null || _dc.isClosed()) {
-                com.bc.diskcache.SimpleDiskLruCache.removeCacheDir(cacheDir);
-                _dc = this.openCache();
-            }
-            return _dc;
-        }finally{
-            CACHE_LOCK.unlock();
-        }
-    }
-    
-    private DiskLruCacheIx openCache() {
-        try{
-            LOG.log(Level.INFO, "Opening disk LRU cache for: {0}", this.getClass());
-            return com.bc.diskcache.SimpleDiskLruCache.open(cacheDir, 1, this.maxCacheSizeBytes);
-        }catch(Exception e) {
-            LOG.log(Level.WARNING, "Failed to open Cache at: " + cacheDir, e);
-            return com.bc.diskcache.DiskLruCacheIx.NO_OP;
-        }
     }
 }
