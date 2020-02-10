@@ -15,7 +15,7 @@
  */
 package com.bc.safecontent.test;
 
-import com.bc.safecontent.service.SafeContentService;
+import com.bc.safecontent.service.ContentFlaggingService;
 import com.bc.safecontent.service.controllers.response.ResponseBuilder;
 import com.bc.safecontent.service.controllers.response.ResponseImpl;
 import java.util.Objects;
@@ -52,11 +52,9 @@ public class Mocker {
         this.testConfig = Objects.requireNonNull(testConfig);
     }
     
-    public SafeContentService mock(SafeContentService instance, String flags) {
-//        when(instance.requestFlags(any(String[].class))).thenCallRealMethod();
-//        when(instance.requestFlags(any(String.class), any(String[].class))).thenCallRealMethod();
-//        doCallRealMethod().when(instance).appendFlags(any(StringBuilder.class), any(String[].class));
-        when(instance.requestFlags(any(String.class), any(String[].class))).thenReturn(flags);
+    public ContentFlaggingService mock(ContentFlaggingService instance, String flags) {
+//        when(instance.flag(any(String[].class), any(String[].class), any(long.class))).thenReturn(flags);
+        when(instance.flag(any(ContentFlaggingService.Content.class), any(long.class))).thenReturn(flags);
         return instance;
     }
     
