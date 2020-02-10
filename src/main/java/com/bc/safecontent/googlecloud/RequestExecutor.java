@@ -20,6 +20,7 @@ import com.bc.safecontent.OkHttp;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
@@ -38,35 +39,38 @@ public class RequestExecutor {
         this.endpoint = Objects.requireNonNull(endpoint);
     }
     
-    public GoogleCloudResponse request(String json, GoogleCloudResponse outputIfNone) 
+    public GoogleCloudResponse request(String json, 
+            long timeout, TimeUnit timeUnit, GoogleCloudResponse outputIfNone) 
             throws IOException, java.text.ParseException {
-        final Map jsonData = (Map)this.requestJsonData(json, null);
+        final Map jsonData = (Map)this.requestJsonData(json, timeout, timeUnit, null);
         return jsonData == null ? outputIfNone : new GoogleCloudResponse(jsonData);
     }
 
-    public Object requestJsonData(String json, Object outputIfNone) 
+    public Object requestJsonData(String json, long timeout, TimeUnit timeUnit, Object outputIfNone) 
             throws IOException, java.text.ParseException {
-        return this.requestJsonData(this.buildUrl(), json, null);
+        return this.requestJsonData(this.buildUrl(), json, timeout, timeUnit, null);
     }
 
-    public String requestJson(String json, String outputIfNone) throws IOException {
-        return this.requestJson(this.buildUrl(), json, outputIfNone);
+    public String requestJson(String json, long timeout, TimeUnit timeUnit, String outputIfNone) throws IOException {
+        return this.requestJson(this.buildUrl(), json, timeout, timeUnit, outputIfNone);
     }
 
-    public Response execute(String json) throws IOException {
-        return this.execute(this.buildUrl(), json);
+    public Response execute(String json, long timeout, TimeUnit timeUnit) throws IOException {
+        return this.execute(this.buildUrl(), json, timeout, timeUnit);
     }
     
-    public GoogleCloudResponse request(String url, String json, GoogleCloudResponse outputIfNone) 
+    public GoogleCloudResponse request(String url, String json, 
+            long timeout, TimeUnit timeUnit, GoogleCloudResponse outputIfNone) 
             throws IOException, java.text.ParseException {
-        final Map jsonData = (Map)this.requestJsonData(url, json, null);
+        final Map jsonData = (Map)this.requestJsonData(url, json, timeout, timeUnit, null);
         return jsonData == null ? outputIfNone : new GoogleCloudResponse(jsonData);
     }
 
-    public Object requestJsonData(String url, String json, Object outputIfNone) 
+    public Object requestJsonData(String url, String json, 
+            long timeout, TimeUnit timeUnit, Object outputIfNone) 
             throws IOException, java.text.ParseException {
         
-        final String jsonResponse = this.requestJson(url, json, null);
+        final String jsonResponse = this.requestJson(url, json, timeout, timeUnit, null);
         
         try{
             return jsonResponse == null ? outputIfNone : JSONValue.parseWithException(jsonResponse);
@@ -75,9 +79,10 @@ public class RequestExecutor {
         }
     }
 
-    public String requestJson(String url, String json, String outputIfNone) throws IOException {
+    public String requestJson(String url, String json, 
+            long timeout, TimeUnit timeUnit, String outputIfNone) throws IOException {
         
-        try(final Response response = this.execute(url, json)) {
+        try(final Response response = this.execute(url, json, timeout, timeUnit)) {
         
             final ResponseBody responseBody = response == null ? null : response.body();
             
@@ -89,7 +94,7 @@ public class RequestExecutor {
         }
     }
     
-    public Response execute(String url, String json) throws IOException {
+    public Response execute(String url, String json, long timeout, TimeUnit timeUnit) throws IOException {
   
         final RequestBody jsonBody = RequestBody.create(
                 MediaType.parse("application/json; charset=utf-8"), json);
@@ -99,7 +104,9 @@ public class RequestExecutor {
                 .url(url)
                 .build();
         
-        final OkHttpClient client = OkHttp.getInstance().getClient();
+        OkHttpClient client = OkHttp.getInstance().getClient();
+
+        client = client.newBuilder().callTimeout(timeout, timeUnit).build();
         
         final Response response = client.newCall(request).execute();
         
