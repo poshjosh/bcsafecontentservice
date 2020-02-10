@@ -74,8 +74,8 @@ public class SensitiveWordsImpl implements SensitiveWords {
 
                 final String key = this.buildKey(flag, hood);
                 final String val = properties.getProperty(key, null);
-                if(LOG.isLoggable(Level.FINER)) {
-                    LOG.log(Level.FINER, "{0} = {1}", new Object[]{key, val});
+                if(LOG.isLoggable(Level.FINEST)) {
+                    LOG.log(Level.FINEST, "{0} = {1}", new Object[]{key, val});
                 }
 
                 if(val != null && !val.isEmpty()) {
@@ -83,8 +83,8 @@ public class SensitiveWordsImpl implements SensitiveWords {
 //                    result.put(key, pattern);
                     final String [] parts = val.split(",");
                     
-                    if(LOG.isLoggable(Level.FINER)) {
-                        LOG.log(Level.FINER, "Split parts: {0}", Arrays.toString(parts));
+                    if(LOG.isLoggable(Level.FINEST)) {
+                        LOG.log(Level.FINEST, "Split parts: {0}", Arrays.toString(parts));
                     }
                     
                     if(parts != null && parts.length > 0) {
@@ -125,8 +125,8 @@ public class SensitiveWordsImpl implements SensitiveWords {
             for(Likelihood l : likelihoods) {
                 final String key = this.buildKey(flag, l);
                 final Pattern pattern = this.patterns.get(key);
-                if(LOG.isLoggable(Level.FINER)) {
-                    LOG.log(Level.FINER, "{0} = {1}", new Object[]{key, (pattern==null?null:pattern.pattern())});
+                if(LOG.isLoggable(Level.FINEST)) {
+                    LOG.log(Level.FINEST, "{0} = {1}", new Object[]{key, (pattern==null?null:pattern.pattern())});
                 }
                 final Matcher matcher = pattern == null ? null : pattern.matcher(text);
                 if(matcher != null && matcher.find()) {
@@ -137,8 +137,8 @@ public class SensitiveWordsImpl implements SensitiveWords {
                     result = true;
                     break;
                 }else{
-                    if(LOG.isLoggable(Level.FINER)) {
-                        LOG.log(Level.FINER, "Pattern not found in text: {0}, Pattern. name: {1}, value: {2}", 
+                    if(LOG.isLoggable(Level.FINEST)) {
+                        LOG.log(Level.FINEST, "Pattern not found in text: {0}, Pattern. name: {1}, value: {2}", 
                                 new Object[]{text, key, (pattern==null?null:pattern.pattern())});
                     }
                 }
