@@ -17,11 +17,13 @@ package com.bc.safecontent;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * @author USER
  */
 @SpringBootApplication
+@EnableCaching
 public class SafeContentApplication {
     public static void main(String[] args) {
         SpringApplication.run(SafeContentApplication.class, args);
