@@ -1,7 +1,7 @@
 package com.bc.safecontent;
 
-import com.bc.safecontent.service.SafeContentService;
-import com.bc.safecontent.service.SafeContentServiceImpl;
+import com.bc.safecontent.service.ContentFlaggingService;
+import com.bc.safecontent.service.ContentImpl;
 
 /**
  * @author USER
@@ -10,7 +10,7 @@ public class ReadMe {
     
     public static void main(String... args) {
         
-        final SafeContentService svc = new SafeContentServiceImpl();  
+        final ContentFlaggingService svc = ContentFlaggingService.defaultInstance();
         
         final String imageurl = "http://www.buzzwears.com/local/images/fashion/2018/03/2_16257b445c0.jpg";
         
@@ -23,7 +23,9 @@ public class ReadMe {
             "Bloodied limbs was scattered everywhere after the explosion"
         };
         
-        final String flags = svc.requestFlags(imageurl, somecontent);
+        final long timeout = 15_000;
+        
+        final String flags = svc.flag(new ContentImpl(imageurl, somecontent), timeout);
         
         System.out.println(flags);
         
