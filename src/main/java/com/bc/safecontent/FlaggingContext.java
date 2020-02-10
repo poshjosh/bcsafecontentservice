@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.bc.safecontent;
 
 import com.bc.safecontent.util.Collector;
