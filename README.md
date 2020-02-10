@@ -15,11 +15,7 @@ import java.io.File;
 Create the service instance
 
 ```java
-        
-        final File cacheDir = null; // Provide value
-        final int maxCacheSizeBytes = 10_000_000; // Provide value        
-        
-        final SafeContentService svc = new SafeContentServiceImpl(cacheDir, maxCacheSizeBytes);  
+        final SafeContentService svc = new SafeContentServiceImpl();  
 ```
 
 Use the created service instance to flag content
