@@ -38,11 +38,11 @@ public class EndpointRequestParams {
         final String imageurl = testData.getImageurl();
         final String [] arr = testData.getUnsafeText();
         final String text = Arrays.asList(arr).stream().collect(Collectors.joining(","));
-        final Map params = new HashMap<>();
+        final Map<String, String> params = new HashMap<>();
         switch(endpoint) {
             case Endpoints.ISSAFE:
             case Endpoints.FLAG:
-                params.put(ParamNames.TIMEOUT, testData.getTimeout());
+                params.put(ParamNames.TIMEOUT, String.valueOf(testData.getTimeout()));
                 params.put(ParamNames.IMAGE_URLS, imageurl);
                 params.put(ParamNames.TEXT, text);
                 break;
