@@ -2,8 +2,6 @@ package com.bc.safecontent;
 
 import com.bc.safecontent.service.SafeContentService;
 import com.bc.safecontent.service.SafeContentServiceImpl;
-import com.bc.safecontent.test.TestDirs;
-import java.io.File;
 
 /**
  * @author USER
@@ -12,10 +10,7 @@ public class ReadMe {
     
     public static void main(String... args) {
         
-        final File cacheDir = TestDirs.CACHE_DIR.toFile(); // Provide value
-        final int maxCacheSizeBytes = 10_000_000; // Provide value        
-        
-        final SafeContentService svc = new SafeContentServiceImpl(cacheDir, maxCacheSizeBytes);  
+        final SafeContentService svc = new SafeContentServiceImpl();  
         
         final String imageurl = "http://www.buzzwears.com/local/images/fashion/2018/03/2_16257b445c0.jpg";
         
