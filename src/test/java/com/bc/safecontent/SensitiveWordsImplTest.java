@@ -15,6 +15,9 @@
  */
 package com.bc.safecontent;
 
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -46,7 +49,7 @@ public class SensitiveWordsImplTest {
     public void testMatchesAny_3args() {
         System.out.println("matchesAny");
         final String [] flags = StandardFlags.ALL;
-        final Likelihood[] likelihoods = {Likelihood.VERY_LIKELY, Likelihood.LIKELY, Likelihood.POSSIBLE};
+        final Set<Likelihood> likelihoods = EnumSet.of(Likelihood.VERY_LIKELY, Likelihood.LIKELY, Likelihood.POSSIBLE);
         this.test("No modicum of respect", flags, likelihoods, false);
         this.test("He hinted that her cum was quite thick", flags, likelihoods, true);
         this.test("This is the pussy cat", flags, likelihoods, true);
@@ -56,7 +59,7 @@ public class SensitiveWordsImplTest {
         this.test("UK APC seeks support for Sanwo-Olu", flags, likelihoods, false);
     }
     
-    public void test(String text, String[] flags, Likelihood[] likelihoods, boolean expResult) {
+    public void test(String text, String[] flags, Collection<Likelihood> likelihoods, boolean expResult) {
         boolean result = instance.matchesAny(text, flags, likelihoods);
         System.out.println("Result. Expected: " + expResult + ", found: " + result + ". Text: " + text);
         assertEquals(expResult, result);
