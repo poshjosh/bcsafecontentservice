@@ -17,7 +17,7 @@
 
     <groupId>com.looseboxes</groupId>
     <artifactId>bcsafecontentservice</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>bcsafecontentservice</name>
     <description>API for checking the safety of content vis-a-vis violence, adult, profanity etc</description>
