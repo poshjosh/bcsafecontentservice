@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import com.bc.safecontent.StandardFlags;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 22, 2018 5:02:51 AM
@@ -113,7 +114,7 @@ public final class SafeContentServiceImpl implements SafeContentService {
     @Override
     public void appendFlags(StringBuilder appendTo, String imageurl, String...text) {
         if(imageurl != null && !imageurl.isEmpty()) {
-            this.appendGoogleSafeSearchFlags(appendTo, null, StandardFlags.IMAGE_SUFFIX, imageurl);
+            this.appendGoogleSafeSearchFlags(appendTo, null, StandardFlags.IMAGE_SUFFIX, imageurl, 30_000);
         }
         if(LOG.isLoggable(Level.FINEST)) {
             LOG.log(Level.FINEST, "Google SafeSearch flags: {0}, url: {1}", new Object[]{appendTo, imageurl});
@@ -124,18 +125,21 @@ public final class SafeContentServiceImpl implements SafeContentService {
         }
     }
 
-    private void appendGoogleSafeSearchFlags(StringBuilder builder, String prefix, String suffix, String imageurl) {
+    private void appendGoogleSafeSearchFlags(StringBuilder builder, String prefix, String suffix, 
+            String imageurl, long timeoutMillis) {
         if(imageurl != null && ! imageurl.isEmpty()) {
             final Collector<String, StringBuilder> collector = new CollectIntoBuffer(builder, prefix, suffix);
-            this.requestGoogleSafeSearchFlags(imageurl, collector);
+            this.requestGoogleSafeSearchFlags(imageurl, collector, timeoutMillis);
         }
     }
     
-    private void requestGoogleSafeSearchFlags(String imageurl, Collector<String, StringBuilder> collector) {
+    private void requestGoogleSafeSearchFlags(String imageurl, 
+            Collector<String, StringBuilder> collector, long timeoutMillis) {
         
         if(imageurl != null && ! imageurl.isEmpty()) {
             
-            final Map data = this.safeSearchService.requestAnnotation(imageurl);
+            final Map data = this.safeSearchService.requestAnnotation(
+                    imageurl, timeoutMillis, TimeUnit.MILLISECONDS);
 
             this.safeSearchService.collectFlags(data, safeSearchLikelihoods, collector);
         }
