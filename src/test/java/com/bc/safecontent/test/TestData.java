@@ -28,6 +28,10 @@ public class TestData {
     
     private final int successCode = HttpServletResponse.SC_OK;
     
+    public int getTimeout() {
+        return 10_000;
+    }
+    
     public String getImageurl() {
         return "http://www.buzzwears.com/local/images/fashion/2018/03/2_16257b445c0.jpg";
     }
