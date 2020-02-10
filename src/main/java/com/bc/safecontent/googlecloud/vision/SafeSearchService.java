@@ -16,6 +16,7 @@
 
 package com.bc.safecontent.googlecloud.vision;
 
+import com.bc.safecontent.Likelihood;
 import com.bc.safecontent.util.CollectIntoBuffer;
 import com.bc.safecontent.util.Collector;
 import com.bc.safecontent.googlecloud.GoogleCloudResponse;
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 22, 2018 12:06:07 AM
  */
-public class SafeSearchService {
+public final class SafeSearchService {
 
     private transient static final Logger LOG = Logger.getLogger(SafeSearchService.class.getName());
     
@@ -44,14 +45,14 @@ public class SafeSearchService {
     }
     
     public String requestFlags(String imageurl, 
-            Collection<String> likelihoods, String outputIfNone) {
+            Collection<Likelihood> likelihoods, String outputIfNone) {
         
         final Map resItem = this.requestAnnotation(imageurl);
         
         return this.buildFlags(resItem, likelihoods, outputIfNone);
     }
     
-    public String buildFlags(Map resItem, Collection<String> likelihoods, String outputIfNone) {
+    public String buildFlags(Map resItem, Collection<Likelihood> likelihoods, String outputIfNone) {
         
         final String result;
         
@@ -66,7 +67,7 @@ public class SafeSearchService {
         return result == null ? outputIfNone : result;
     }
 
-    public void collectFlags(Map resItem, Collection<String> likelihoods, 
+    public void collectFlags(Map resItem, Collection<Likelihood> likelihoods, 
             Collector<String, StringBuilder> collector) {
         if(resItem != null && ! resItem.isEmpty()) {
             final Set<String> keys = resItem.keySet();
@@ -80,9 +81,9 @@ public class SafeSearchService {
         }
     }
     
-    private boolean contains(Collection<String> c, String s) {
-        for(String e : c) {
-            if(e.equalsIgnoreCase(s)) {
+    private boolean contains(Collection<Likelihood> likelihoods, String s) {
+        for(Likelihood likelihood : likelihoods) {
+            if(likelihood.name().equalsIgnoreCase(s)) {
                 return true;
             }
         }
