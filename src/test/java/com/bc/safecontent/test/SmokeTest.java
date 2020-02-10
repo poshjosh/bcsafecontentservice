@@ -15,7 +15,8 @@
  */
 package com.bc.safecontent.test;
 
-import com.bc.safecontent.service.controllers.SafeContentController;
+import com.bc.safecontent.service.controllers.ContentFlaggingController;
+import com.bc.safecontent.service.controllers.ShutdownController;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class SmokeTest {
 
-    @Autowired private SafeContentController safeContentController;
+    @Autowired private ContentFlaggingController safeContentController;
+    @Autowired private ShutdownController shutdownController;
 
     @Test
-    public void safeContentApplication_whenRun_safeContentControllerLoads() throws Exception {
-        System.out.println("safeContentApplication_whenRun_safeContentControllerLoads()");
+    public void safeContentApplication_whenRun_contentFlaggingControllerLoads() throws Exception {
+        System.out.println("safeContentApplication_whenRun_contentFlaggingControllerLoads()");
         assertThat(safeContentController).isNotNull();
+    }
+
+    @Test
+    public void safeContentApplication_whenRun_shutdownControllerLoads() throws Exception {
+        System.out.println("safeContentApplication_whenRun_shutdownControllerLoads()");
+        assertThat(shutdownController).isNotNull();
     }
 }
