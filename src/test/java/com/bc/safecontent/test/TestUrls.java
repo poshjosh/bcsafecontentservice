@@ -37,9 +37,13 @@ public class TestUrls{
         return new TestUrls(s, this.endpointReqParams);
     }
     
-    public String getEndpointUrlWithParams(int port, String endpoint) {
-        final StringBuilder builder = new StringBuilder(this.getEndpointUrl(port, endpoint));
+    public String getEndpointUrlWithDefaultParams(int port, String endpoint) {
         final Map<String, String> params = endpointReqParams.forEndpoint(endpoint);
+        return this.getEndpointUrlWithParams(port, endpoint, params);
+    }
+
+    public String getEndpointUrlWithParams(int port, String endpoint, Map<String, String> params) {
+        final StringBuilder builder = new StringBuilder(this.getEndpointUrl(port, endpoint));
         if( ! params.isEmpty()) {
             builder.append('?');
             final AtomicInteger index = new AtomicInteger(0);
