@@ -7,15 +7,14 @@
 Imports
 
 ```java
-import com.bc.safecontent.service.SafeContentService;
-import com.bc.safecontent.service.SafeContentServiceImpl;
-import java.io.File;
+import com.bc.safecontent.service.ContentFlaggingService;
+import com.bc.safecontent.service.ContentImpl;
 ```
 
 Create the service instance
 
 ```java
-        final SafeContentService svc = new SafeContentServiceImpl();  
+        final ContentFlaggingService svc = ContentFlaggingService.defaultInstance();
 ```
 
 Use the created service instance to flag content
@@ -33,7 +32,9 @@ Use the created service instance to flag content
             "Bloodied limbs was scattered everywhere after the explosion"
         };
         
-        final String flags = svc.requestFlags(imageurl, somecontent);
+        final long timeout = 15_000;
+        
+        final String flags = svc.flag(new ContentImpl(imageurl, somecontent), timeout);
         
         System.out.println(flags);
 ```
