@@ -41,4 +41,8 @@ public class AppConfiguration {
         Path safeContentCacheDir, int maxSizeBytes) {
         return new SafeContentServiceImpl(safeContentCacheDir.toFile(), maxSizeBytes);
     }
+    
+    @Bean public TerminateBean terminateBean() {
+        return new TerminateBean();
+    }
 }
