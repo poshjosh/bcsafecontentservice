@@ -10,7 +10,7 @@ misc/
 nb-configuration.xml
 nbactions.xml
 
-*.properties
+#*.properties
 *.sql
 
 # Compiled class file
