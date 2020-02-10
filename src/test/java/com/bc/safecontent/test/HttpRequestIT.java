@@ -16,9 +16,11 @@
 package com.bc.safecontent.test;
 
 import com.bc.safecontent.service.controllers.Endpoints;
+import com.bc.safecontent.service.controllers.ParamNames;
 import com.bc.safecontent.service.controllers.response.ResponseImpl;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
@@ -31,13 +33,13 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.TestMethodOrder;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 /**
  * @author USER
@@ -48,6 +50,8 @@ import org.springframework.http.ResponseEntity;
 public class HttpRequestIT {
     
     @Autowired private TestUrls testUrls;
+    
+    @Autowired private EndpointRequestParams reqParams;
 
     @LocalServerPort private int port;
 
@@ -60,6 +64,19 @@ public class HttpRequestIT {
         this.givenEndpoint_ShouldReturn(Endpoints.ISSAFE, 200, true);
     }
     
+    @Test
+    public void flagRequest_GivenNegativeTimeout_ShouldReturnSuccessfully() throws Exception {
+        System.out.println("flagRequest_GivenNegativeTimeout_ShouldReturnSuccessfully");
+    
+        final Map<String, String> params = reqParams.forEndpoint(Endpoints.FLAG);
+        
+        params.put(ParamNames.TIMEOUT, String.valueOf(Integer.MIN_VALUE));
+        
+        final String url = testUrls.getEndpointUrlWithParams(port, Endpoints.FLAG, params);
+        
+        this.givenUrl_ShouldReturn(url, 200, true);
+    }
+
     @Test
     public void flagRequest_ShouldReturnSuccessfully() throws Exception {
         System.out.println("flagRequest_ShouldReturnSuccessfully");
@@ -76,7 +93,7 @@ public class HttpRequestIT {
     private ResponseEntity<ResponseImpl> givenEndpoint_ShouldReturn(String endpoint, List<String> cookies, 
             int code, boolean success) throws Exception {
         
-        final String url = testUrls.getEndpointUrlWithParams(port, endpoint);
+        final String url = testUrls.getEndpointUrlWithDefaultParams(port, endpoint);
         
         return this.givenUrl_ShouldReturn(url, cookies, code, success);
     }
@@ -104,7 +121,7 @@ public class HttpRequestIT {
             final HttpEntity<String> entity = new HttpEntity<>(headers);
             result = restTemplate.exchange(url, HttpMethod.GET, entity, ResponseImpl.class);
 
-            final List<String> cookiesReceived = result.getHeaders().get("Set-Cookie");
+            final List<String> cookiesReceived = getCookies(result.getHeaders());
             System.out.println("Cookies received: " + cookiesReceived);
             System.out.println("----------------------------------");
 
@@ -118,5 +135,10 @@ public class HttpRequestIT {
         }
         
         return result;
+    }
+    
+    private List<String> getCookies(HttpHeaders headers) {
+        final List<String> cookies = headers.get("Set-Cookie");
+        return cookies == null ? Collections.EMPTY_LIST : cookies;
     }
 }
