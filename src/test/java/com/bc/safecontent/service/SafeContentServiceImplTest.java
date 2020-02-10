@@ -15,7 +15,7 @@
  */
 package com.bc.safecontent.service;
 
-import java.io.File;
+import com.bc.safecontent.test.TestDirs;
 import java.util.Arrays;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -34,7 +34,7 @@ public class SafeContentServiceImplTest {
     
     @BeforeClass
     public static void setUpClass() {
-        service = new SafeContentServiceImpl(new File("safecontentflags/cache"), 10_000_000);
+        service = new SafeContentServiceImpl(TestDirs.CACHE_DIR.toFile(), 10_000_000);
     }
     
     @AfterClass
