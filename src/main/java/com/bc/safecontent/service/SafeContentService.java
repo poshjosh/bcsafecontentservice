@@ -21,11 +21,19 @@ package com.bc.safecontent.service;
  */
 public interface SafeContentService {
 
-    String requestFlags(String... text);
+    default String requestFlags(String... text) {
+        return this.requestFlags(null, text);
+    }
     
-    String requestFlags(String imageurl, String... text);
+    default String requestFlags(String imageurl, String... text) {
+        final StringBuilder builder = new StringBuilder();
+        this.appendFlags(builder, imageurl, text);
+        return builder.toString();
+    }
     
-    void appendFlags(StringBuilder appendTo, String...text);
+    default void appendFlags(StringBuilder appenndTo, String...text) {
+        this.appendFlags(appenndTo, null, text);
+    }
     
     void appendFlags(StringBuilder appendTo, String imageurl, String...text);
     
