@@ -18,6 +18,7 @@ package com.bc.safecontent.service.controllers;
 import com.bc.safecontent.StandardFlags;
 import com.bc.safecontent.service.ContentFlaggingService;
 import com.bc.safecontent.service.ContentFlaggingService.Content;
+import com.bc.safecontent.service.ContentImpl;
 import com.bc.safecontent.service.controllers.response.ResponseBuilder;
 import com.bc.safecontent.test.EndpointRequestBuilders;
 import com.bc.safecontent.test.EndpointRequestParams;
@@ -114,8 +115,6 @@ public class ContentFlaggingControllerMockIT {
     }
     
     private void verifyService(String endpoint) {
-        final ArgumentCaptor<List<String>> imageCaptor = ArgumentCaptor.forClass(List.class);
-        final ArgumentCaptor<List<String>> textCaptor = ArgumentCaptor.forClass(List.class);
         final ArgumentCaptor<Content> contentCaptor = ArgumentCaptor.forClass(Content.class);
         final ArgumentCaptor<Long> timeoutCaptor = ArgumentCaptor.forClass(long.class);
         
@@ -123,13 +122,13 @@ public class ContentFlaggingControllerMockIT {
         if(debug) LOG.debug("Endpoint: " +endpoint+ ", params: " + params);
         final String [] imageurls = params.get(ParamNames.IMAGE_URLS).split(",");
         final String [] text = params.get(ParamNames.TEXT).split(",");
+        final Content content = new ContentImpl(imageurls, text);
         final String s = params.get(ParamNames.TIMEOUT);
         final long timeout = s == null || s.isEmpty() ? 0 : Long.parseLong(s);
-//        verify(service, times(1)).flag(imageCaptor.capture(), textCaptor.capture(), timeoutCaptor.capture());
+
         verify(service, times(1)).flag(contentCaptor.capture(), timeoutCaptor.capture());
-        assertMethodVarArgs(service, "requestFlags", 0, imageurls, imageCaptor);
-        assertMethodVarArgs(service, "requestFlags", 1, text, textCaptor);
-        assertMethodArg(service, "requestFlags", 2, timeout, timeoutCaptor);
+        assertMethodArg(service, "requestFlags", 0, content, contentCaptor);
+        assertMethodArg(service, "requestFlags", 1, timeout, timeoutCaptor);
     }
     
     private void verifyResBuilder(String endpoint, boolean err) {
