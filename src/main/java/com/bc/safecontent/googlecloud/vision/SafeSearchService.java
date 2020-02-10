@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,10 +45,10 @@ public final class SafeSearchService {
         this.visionReqExec = new VisionRequestExecutor();
     }
     
-    public String requestFlags(String imageurl, 
-            Collection<Likelihood> likelihoods, String outputIfNone) {
+    public String requestFlags(String imageurl, Collection<Likelihood> likelihoods, 
+            long timeout, TimeUnit timeUnit, String outputIfNone) {
         
-        final Map resItem = this.requestAnnotation(imageurl);
+        final Map resItem = this.requestAnnotation(imageurl, timeout, timeUnit);
         
         return this.buildFlags(resItem, likelihoods, outputIfNone);
     }
@@ -90,9 +91,9 @@ public final class SafeSearchService {
         return false;
     }
 
-    public Map requestAnnotation(String imageurl) {
+    public Map requestAnnotation(String imageurl, long timeout, TimeUnit timeUnit) {
         
-        final GoogleCloudResponse res = this.request(imageurl);
+        final GoogleCloudResponse res = this.request(imageurl, timeout, timeUnit);
         
         Map result;
         
@@ -107,7 +108,7 @@ public final class SafeSearchService {
         return result == null || result.isEmpty() ? Collections.EMPTY_MAP : result;
     }
 
-    public GoogleCloudResponse request(String imageurl) {
+    public GoogleCloudResponse request(String imageurl, long timeout, TimeUnit timeUnit) {
 
         final String featureType = "SAFE_SEARCH_DETECTION";
 
@@ -116,7 +117,7 @@ public final class SafeSearchService {
             
             final String requestJson = singleImgFeatureReq.buildJson(imageurl, featureType);
 
-            res = visionReqExec.request(requestJson, null);
+            res = visionReqExec.request(requestJson, timeout, timeUnit, null);
             
         }catch(IOException | java.text.ParseException e) {
             LOG.log(Level.WARNING, "{0}", e.toString());
