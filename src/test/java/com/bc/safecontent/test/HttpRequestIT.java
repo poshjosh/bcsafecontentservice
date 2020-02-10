@@ -21,6 +21,7 @@ import com.bc.safecontent.service.controllers.response.ResponseImpl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
@@ -40,6 +41,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Disabled;
 
 /**
  * @author USER
@@ -58,30 +60,79 @@ public class HttpRequestIT {
     @Autowired private TestRestTemplate restTemplate;
 
     @Test
-    public void issafeRequest_ShouldReturnSuccessfully() throws Exception {
-        System.out.println("issafeRequest_ShouldReturnSuccessfully");
+    public void issafeRequest_GivenValidParameters_ShouldReturnSuccessfully() throws Exception {
+        System.out.println("issafeRequest_GivenValidParameters_ShouldReturnSuccessfully");
         
-        this.givenEndpoint_ShouldReturn(Endpoints.ISSAFE, 200, true);
+        endpoint_ShouldReturn(Endpoints.ISSAFE, (params) -> {}, 200, true);
     }
     
     @Test
-    public void flagRequest_GivenNegativeTimeout_ShouldReturnSuccessfully() throws Exception {
-        System.out.println("flagRequest_GivenNegativeTimeout_ShouldReturnSuccessfully");
+    public void flagRequest_GivenNoText_ShouldReturnSuccessfully() throws Exception {
+        System.out.println("flagRequest_GivenNoText_ShouldReturnSuccessfully");
     
-        final Map<String, String> params = reqParams.forEndpoint(Endpoints.FLAG);
-        
-        params.put(ParamNames.TIMEOUT, String.valueOf(Integer.MIN_VALUE));
-        
-        final String url = testUrls.getEndpointUrlWithParams(port, Endpoints.FLAG, params);
-        
-        this.givenUrl_ShouldReturn(url, 200, true);
+        endpoint_ShouldReturn(Endpoints.FLAG, 
+                (params) -> params.remove(ParamNames.TEXT), 200, true);
     }
 
     @Test
-    public void flagRequest_ShouldReturnSuccessfully() throws Exception {
-        System.out.println("flagRequest_ShouldReturnSuccessfully");
+    public void flagRequest_GivenNoImageurl_ShouldReturnSuccessfully() throws Exception {
+        System.out.println("flagRequest_GivenNoImageurl_ShouldReturnSuccessfully");
     
-        this.givenEndpoint_ShouldReturn(Endpoints.FLAG, 200, true);
+        endpoint_ShouldReturn(Endpoints.FLAG, 
+                (params) -> params.remove(ParamNames.IMAGE_URLS), 200, true);
+    }
+
+    @Test
+    public void flagRequest_GivenNoTimeout_ShouldReturnSuccessfully() throws Exception {
+        System.out.println("flagRequest_GivenNoTimeout_ShouldReturnSuccessfully");
+    
+        endpoint_ShouldReturn(Endpoints.FLAG, 
+                (params) -> params.remove(ParamNames.TIMEOUT), 200, true);
+    }
+
+    @Test
+    @Disabled("@TODO Is zero synonymous with infinity or no - timeout?")
+    public void flagRequest_GivenZeroTimeout_ShouldReturnSuccessfully() throws Exception {
+        System.out.println("flagRequest_GivenZeroTimeout_ShouldReturnSuccessfully");
+
+        endpoint_ShouldReturn(Endpoints.FLAG, 
+                (params) -> params.put(ParamNames.TIMEOUT, "0"), 200, true);
+    }
+
+    @Test
+    public void flagRequest_GivenNegativeTimeout_ShouldReturnSuccessfully() throws Exception {
+        System.out.println("flagRequest_GivenNegativeTimeout_ShouldReturnSuccessfully");
+
+        final String timeout = String.valueOf(Integer.MIN_VALUE);
+        
+        endpoint_ShouldReturn(Endpoints.FLAG, 
+                (params) -> params.put(ParamNames.TIMEOUT, timeout), 200, true);
+    }
+
+    @Test
+    public void flagRequest_GivenValidParameters_ShouldReturnSuccessfully() throws Exception {
+        System.out.println("flagRequest_GivenValidParameters_ShouldReturnSuccessfully");
+    
+        endpoint_ShouldReturn(Endpoints.FLAG, (params) -> {}, 200, true);
+    }
+
+    private void endpoint_ShouldReturn(String endpoint, 
+            Consumer<Map<String, String>> paramsFmt, int code, boolean success) {
+        System.out.println("flagRequest_GivenNegativeTimeout_ShouldReturnSuccessfully");
+        try{
+            
+            final Map<String, String> params = reqParams.forEndpoint(endpoint);
+
+            paramsFmt.accept(params);
+
+            final String url = testUrls.getEndpointUrlWithParams(port, endpoint, params);
+
+            this.givenUrl_ShouldReturn(url, code, success);
+        
+        }catch(Exception e){
+            
+            fail(e.toString());
+        }
     }
 
     private ResponseEntity<ResponseImpl> givenEndpoint_ShouldReturn(String endpoint, 
