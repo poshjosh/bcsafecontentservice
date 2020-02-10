@@ -19,7 +19,8 @@ package com.bc.safecontent.service.controllers;
  * @author USER
  */
 public interface ParamNames {
-    String IMAGE_URL = "imageurl";
+    String IMAGE_URLS = "imageurls";
     String TEXT = "text";
     String DELAY = "delay";
+    String TIMEOUT = "timeout";
 }
