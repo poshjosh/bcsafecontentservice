@@ -21,4 +21,5 @@ package com.bc.safecontent.service.controllers;
 public interface ParamNames {
     String IMAGE_URL = "imageurl";
     String TEXT = "text";
+    String DELAY = "delay";
 }
