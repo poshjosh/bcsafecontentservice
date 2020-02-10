@@ -19,6 +19,7 @@ package com.bc.safecontent.googlecloud.vision;
 import com.bc.safecontent.googlecloud.vision.SafeSearchService;
 import com.bc.safecontent.googlecloud.GoogleCloudResponse;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 21, 2018 5:30:06 PM
@@ -30,7 +31,8 @@ public class SafeSearchDetectionTest {
         
         final String imageurl = "https://storage.googleapis.com/gweb-cloudblog-publish/images/inappropriate-content-detection-11wmcp.max-400x400.PNG";
 
-        final GoogleCloudResponse res = new SafeSearchService().request(imageurl);
+        final GoogleCloudResponse res = new SafeSearchService().request(
+                imageurl, 10_000, TimeUnit.MILLISECONDS);
 
         if(res.isError()) {
             final Object err = res.getErrorResponse(null);

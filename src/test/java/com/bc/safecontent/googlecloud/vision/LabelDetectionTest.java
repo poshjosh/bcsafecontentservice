@@ -20,6 +20,7 @@ import com.bc.safecontent.googlecloud.vision.SingleImageFeatureRequestBuilder;
 import com.bc.safecontent.googlecloud.vision.VisionRequestExecutor;
 import com.bc.safecontent.googlecloud.GoogleCloudResponse;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 21, 2018 8:12:43 PM
@@ -35,7 +36,8 @@ public class LabelDetectionTest {
                     "https://cloud.google.com/vision/docs/images/ferris-wheel.jpg", 
                     "LABEL_DETECTION");
 
-            final GoogleCloudResponse res = new VisionRequestExecutor().request(requestJson, null);
+            final GoogleCloudResponse res = new VisionRequestExecutor().request(
+                    requestJson, 10_000, TimeUnit.MILLISECONDS, null);
             
             if(res.isError()) {
                 final Object err = res.getErrorResponse(null);
