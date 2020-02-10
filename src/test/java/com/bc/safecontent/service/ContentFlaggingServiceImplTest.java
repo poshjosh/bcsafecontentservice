@@ -15,8 +15,12 @@
  */
 package com.bc.safecontent.service;
 
-import com.bc.safecontent.test.TestDirs;
+import com.bc.safecontent.SensitiveWordsImpl;
+import com.bc.safecontent.googlecloud.vision.SafeSearchService;
+import com.bc.safecontent.service.ContentFlaggingService.Content;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,27 +29,32 @@ import org.junit.Test;
  *
  * @author Josh
  */
-public class SafeContentServiceImplTest {
+public class ContentFlaggingServiceImplTest {
     
-    private static SafeContentService service;
+    private static ContentFlaggingService service;
     
-    public SafeContentServiceImplTest() {
+    public ContentFlaggingServiceImplTest() {
     }
     
     @BeforeClass
     public static void setUpClass() {
-        service = new SafeContentServiceImpl(TestDirs.CACHE_DIR.toFile(), 10_000_000);
+        try{
+            service = new ContentFlaggingServiceImpl(new SafeSearchService(), new SensitiveWordsImpl());
+        }catch(IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
     
     @AfterClass
     public static void tearDownClass() {
-        if(service != null && !service.isShutdown()) {
+        if(service != null && !service.getState().isShutdown()) {
             service.shutdown();
         }
     }
 
     /**
-     * Test of requestFlags method, of class SafeContentServiceImpl.
+     * Test of requestFlags method, of class ContentFlaggingServiceImpl.
      */
     @Test
     public void testRequestFlags() {
@@ -83,9 +92,13 @@ public class SafeContentServiceImplTest {
     }
     
     private void testRequestFlags(String imageurl, String... text) {
+        final Content content = new ContentImpl(
+                imageurl==null?null:Collections.singletonList(imageurl),
+                text==null?null:Arrays.asList(text)
+        );
         try{
-            final String flags = service.requestFlags(imageurl, text);
-            System.out.println("Flags: " + flags + ", image url: " + imageurl + ", text: " + Arrays.toString(text));
+            final String flags = service.flag(content, 0);
+            System.out.println("Flags: " + flags + ", content" + content);
         }catch(Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

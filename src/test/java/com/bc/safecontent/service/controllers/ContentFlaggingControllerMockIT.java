@@ -16,7 +16,8 @@
 package com.bc.safecontent.service.controllers;
 
 import com.bc.safecontent.StandardFlags;
-import com.bc.safecontent.service.SafeContentService;
+import com.bc.safecontent.service.ContentFlaggingService;
+import com.bc.safecontent.service.ContentFlaggingService.Content;
 import com.bc.safecontent.service.controllers.response.ResponseBuilder;
 import com.bc.safecontent.test.EndpointRequestBuilders;
 import com.bc.safecontent.test.EndpointRequestParams;
@@ -36,12 +37,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Web MVC test which starts the spring application context without the web
@@ -60,13 +61,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 //@AutoConfigureMockMvc
 //@Import(MyTestConfiguration.class)
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = SafeContentController.class)
+@WebMvcTest(controllers = ContentFlaggingController.class)
 @Import(MyTestConfiguration.class)
-public class SafeContentControllerMockIT {
+public class ContentFlaggingControllerMockIT {
 
     private final boolean debug = true;
     
-    private static final Logger LOG = LoggerFactory.getLogger(SafeContentControllerMockIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContentFlaggingControllerMockIT.class);
     
     @Autowired private Mocker mocker;
     
@@ -77,7 +78,7 @@ public class SafeContentControllerMockIT {
     @Autowired private MockMvc mockMvc;
 
     /** Required by the Controller being tested */
-    @MockBean private SafeContentService service;
+    @MockBean private ContentFlaggingService service;
     
     /** Required by the Controller being tested */
     @MockBean private ResponseBuilder resBuilder;
@@ -113,16 +114,22 @@ public class SafeContentControllerMockIT {
     }
     
     private void verifyService(String endpoint) {
-        final ArgumentCaptor<String> imageCaptor = ArgumentCaptor.forClass(String.class);
-        final ArgumentCaptor<String[]> textCaptor = ArgumentCaptor.forClass(String[].class);
+        final ArgumentCaptor<List<String>> imageCaptor = ArgumentCaptor.forClass(List.class);
+        final ArgumentCaptor<List<String>> textCaptor = ArgumentCaptor.forClass(List.class);
+        final ArgumentCaptor<Content> contentCaptor = ArgumentCaptor.forClass(Content.class);
+        final ArgumentCaptor<Long> timeoutCaptor = ArgumentCaptor.forClass(long.class);
         
         final Map<String, String> params = endpointReqParams.forEndpoint(endpoint);
         if(debug) LOG.debug("Endpoint: " +endpoint+ ", params: " + params);
-        final String imageurl = params.get(ParamNames.IMAGE_URL);
+        final String [] imageurls = params.get(ParamNames.IMAGE_URLS).split(",");
         final String [] text = params.get(ParamNames.TEXT).split(",");
-        verify(service, times(1)).requestFlags(imageCaptor.capture(), textCaptor.capture());
-        assertMethodArg(service, "requestFlags", 0, imageurl, imageCaptor);
+        final String s = params.get(ParamNames.TIMEOUT);
+        final long timeout = s == null || s.isEmpty() ? 0 : Long.parseLong(s);
+//        verify(service, times(1)).flag(imageCaptor.capture(), textCaptor.capture(), timeoutCaptor.capture());
+        verify(service, times(1)).flag(contentCaptor.capture(), timeoutCaptor.capture());
+        assertMethodVarArgs(service, "requestFlags", 0, imageurls, imageCaptor);
         assertMethodVarArgs(service, "requestFlags", 1, text, textCaptor);
+        assertMethodArg(service, "requestFlags", 2, timeout, timeoutCaptor);
     }
     
     private void verifyResBuilder(String endpoint, boolean err) {
