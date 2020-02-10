@@ -108,7 +108,7 @@ public class ContentFlaggingServiceImpl implements ContentFlaggingService{
         }
         final Collector<String, StringBuilder> collector = new CollectIntoBuffer(builder, prefix, suffix);
         if(imageurls.size() == 1) {
-            this.requestGoogleSafeSearchFlags(imageurls.iterator().next(), collector);
+            this.requestGoogleSafeSearchFlags(imageurls.iterator().next(), collector, timeoutMillis);
         }else if(imageurls.size() > 1) {
             //@TODO make this a configuration/property
             final int processors = Runtime.getRuntime().availableProcessors();
@@ -118,7 +118,7 @@ public class ContentFlaggingServiceImpl implements ContentFlaggingService{
                 execSvc.submit(new Runnable(){
                     @Override
                     public void run() {
-                        requestGoogleSafeSearchFlags(imageurl, collector);
+                        requestGoogleSafeSearchFlags(imageurl, collector, timeoutMillis);
                     }
                 });
             }
@@ -135,12 +135,13 @@ public class ContentFlaggingServiceImpl implements ContentFlaggingService{
         }
     }
     
-    private void requestGoogleSafeSearchFlags(String imageurl, 
-            Collector<String, StringBuilder> collector) {
+    private void requestGoogleSafeSearchFlags(
+            String imageurl, Collector<String, StringBuilder> collector, long timeoutMillis) {
         
         if(imageurl != null && ! imageurl.isEmpty()) {
             
-            final Map data = this.safeSearchService.requestAnnotation(imageurl);
+            final Map data = this.safeSearchService.requestAnnotation(
+                    imageurl, timeoutMillis, TimeUnit.MILLISECONDS);
 
             this.safeSearchService.collectFlags(data, unsafeLikelihoods, collector);
         }
