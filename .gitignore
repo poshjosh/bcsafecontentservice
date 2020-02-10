@@ -5,6 +5,7 @@ safecontentflags/*
 
 nbproject/
 target/
+misc/
 
 nb-configuration.xml
 nbactions.xml
