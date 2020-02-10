@@ -15,11 +15,11 @@
  */
 package com.bc.safecontent;
 
-import com.bc.safecontent.service.SafeContentService;
-import com.bc.safecontent.service.SafeContentServiceImpl;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.bc.safecontent.googlecloud.vision.SafeSearchService;
+import com.bc.safecontent.service.ContentFlaggingService;
+import com.bc.safecontent.service.ContentFlaggingServiceImpl;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -32,16 +32,23 @@ public class AppConfiguration {
     
     public AppConfiguration() { }
     
-    @Bean @Scope("singleton") public SafeContentService safeContentService(
-            @Autowired SafeContentProperties props) {
-        return this.safeContentService(Paths.get(props.getCacheDir()), props.getMaxSizeBytes());
+    @Bean @Scope("singleton") public ContentFlaggingService contentFlaggingService() {
+        return new ContentFlaggingServiceImpl(this.safeSearchService(), this.sensitiveWords());
+    }
+
+    @Bean @Scope("singleton") public SafeSearchService safeSearchService() {
+        return new SafeSearchService();
     }
     
-    @Bean @Scope("singleton") public SafeContentService safeContentService(
-        Path safeContentCacheDir, int maxSizeBytes) {
-        return new SafeContentServiceImpl(safeContentCacheDir.toFile(), maxSizeBytes);
+    @Bean @Scope("singleton") public SensitiveWords sensitiveWords() {
+        try{
+            return new SensitiveWordsImpl();
+        }catch(IOException e) {
+//            return SensitiveWords.NO_OP;
+            throw new UncheckedIOException(e);
+        }
     }
-    
+
     @Bean public TerminateBean terminateBean() {
         return new TerminateBean();
     }
