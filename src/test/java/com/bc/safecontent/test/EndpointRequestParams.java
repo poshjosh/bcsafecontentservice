@@ -41,11 +41,11 @@ public class EndpointRequestParams {
         final Map params = new HashMap<>();
         switch(endpoint) {
             case Endpoints.ISSAFE:
-                params.put(ParamNames.IMAGE_URL, imageurl);
+                params.put(ParamNames.IMAGE_URLS, imageurl);
                 params.put(ParamNames.TEXT, text);
                 break;
             case Endpoints.FLAG:
-                params.put(ParamNames.IMAGE_URL, imageurl);
+                params.put(ParamNames.IMAGE_URLS, imageurl);
                 params.put(ParamNames.TEXT, text);
                 break;
             default:
