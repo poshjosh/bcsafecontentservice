@@ -16,6 +16,8 @@
 
 package com.bc.safecontent;
 
+import java.util.Collection;
+
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 22, 2018 2:43:28 AM
  */
@@ -23,16 +25,16 @@ public interface SensitiveWords {
     
     SensitiveWords NO_OP = new SensitiveWords() {
         @Override
-        public boolean matchesAny(String text, Likelihood... likelihoods) {
+        public boolean matchesAny(String text, Collection<Likelihood> likelihoods) {
             return false;
         }
         @Override
-        public boolean matchesAny(String text, String[] flags, Likelihood... likelihoods) {
+        public boolean matchesAny(String text, String[] flags, Collection<Likelihood> likelihoods) {
             return false;
         }
     };
     
-    boolean matchesAny(String text, Likelihood... likelihoods);
+    boolean matchesAny(String text, Collection<Likelihood> likelihoods);
     
-    boolean matchesAny(String text, String [] flags, Likelihood... likelihoods);
+    boolean matchesAny(String text, String [] flags, Collection<Likelihood> likelihoods);
 }

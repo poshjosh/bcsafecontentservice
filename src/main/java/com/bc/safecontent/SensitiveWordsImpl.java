@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -114,12 +115,12 @@ public class SensitiveWordsImpl implements SensitiveWords {
     }
 
     @Override
-    public boolean matchesAny(String text, Likelihood... likelihoods) {
+    public boolean matchesAny(String text, Collection<Likelihood> likelihoods) {
         return this.matchesAny(text, StandardFlags.ALL, likelihoods);
     }
     
     @Override
-    public boolean matchesAny(String text, String [] flags, Likelihood... likelihoods) {
+    public boolean matchesAny(String text, String [] flags, Collection<Likelihood> likelihoods) {
         boolean result = false;
         for(String flag : flags) {
             for(Likelihood l : likelihoods) {
