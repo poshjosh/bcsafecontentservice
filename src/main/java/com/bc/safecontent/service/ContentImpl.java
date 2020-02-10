@@ -31,12 +31,17 @@ public final class ContentImpl implements ContentFlaggingService.Content, Serial
     private final List<String> text;
 
     public ContentImpl(String... text) {
-        this(null, text);
+        this((String)null, text);
     }
     
     public ContentImpl(String imageUrl, String... text) {
         this(imageUrl==null ? Collections.EMPTY_LIST : Collections.singletonList(imageUrl), 
                 text==null || text.length == 0 ? Collections.EMPTY_LIST : Arrays.asList(text));
+    }
+    
+    public ContentImpl(String [] imageUrl, String [] text) {
+        this(imageUrl==null ? Collections.EMPTY_LIST : Arrays.asList(imageUrl), 
+                text == null ? Collections.EMPTY_LIST : Arrays.asList(text));
     }
     
     public ContentImpl(List<String> imageUrl, List<String> text) {
