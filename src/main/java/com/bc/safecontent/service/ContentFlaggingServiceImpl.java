@@ -70,7 +70,7 @@ public class ContentFlaggingServiceImpl implements ContentFlaggingService{
         this.unsafeLikelihoods = Collections.unmodifiableSet(unsafeLikelihoods);
     }
     
-    @Cacheable(value = "contentFlagCache", key="#content", sync=true)
+    @Cacheable(value = "bcsafecontentservice_contentFlagCache", key="#content", sync=true)
     @Override
     public String flag(Content content, long timeoutMillis) {
         final StringBuilder appendTo = new StringBuilder(100);

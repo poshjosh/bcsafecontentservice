@@ -20,9 +20,13 @@ import com.bc.safecontent.service.ContentFlaggingService;
 import com.bc.safecontent.service.ContentFlaggingServiceImpl;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author USER
@@ -31,6 +35,19 @@ import org.springframework.context.annotation.Scope;
 public class AppConfiguration {
     
     public AppConfiguration() { }
+    
+    @Bean
+    public CacheManager cacheManager() {
+        return new EhCacheCacheManager(ehCacheCacheManager().getObject());
+    }
+ 
+    @Bean
+    public EhCacheManagerFactoryBean ehCacheCacheManager() {
+        final EhCacheManagerFactoryBean factory = new EhCacheManagerFactoryBean();
+        factory.setConfigLocation(new ClassPathResource("ehcache.xml"));
+        factory.setShared(true);
+        return factory;
+    }
     
     @Bean @Scope("singleton") public ContentFlaggingService contentFlaggingService() {
         return new ContentFlaggingServiceImpl(this.safeSearchService(), this.sensitiveWords());
