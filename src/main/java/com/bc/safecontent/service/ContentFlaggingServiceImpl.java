@@ -70,7 +70,17 @@ public class ContentFlaggingServiceImpl implements ContentFlaggingService{
         this.unsafeLikelihoods = Collections.unmodifiableSet(unsafeLikelihoods);
     }
     
-    @Cacheable(value = "bcsafecontentservice_contentFlagCache", key="#content", sync=true)
+    /**
+     * This call may invoke third party services.
+     * @param content The content to flag
+     * @param timeoutMillis Spend at most this milliseconds 
+     * @return The flags, if the content is flagged as unsafe. E.g of flags = 
+     * <code>adult,violence,racy,graphic,medical,spoof</code>; empty text if the 
+     * content is flagged as safe or <code>null</code> if the safety or otherwise
+     * of the content could not be ascertained.
+     */
+    @Cacheable(value = "bcsafecontentservice_contentFlagCache", 
+            key="#content", unless="#result == null", sync=true)
     @Override
     public String flag(Content content, long timeoutMillis) {
         final StringBuilder appendTo = new StringBuilder(100);
