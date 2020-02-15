@@ -16,10 +16,12 @@
 
 package com.bc.safecontent.googlecloud.vision;
 
+import com.bc.safecontent.Endpoints;
 import com.bc.safecontent.Likelihood;
 import com.bc.safecontent.util.CollectIntoBuffer;
 import com.bc.safecontent.util.Collector;
 import com.bc.safecontent.googlecloud.GoogleCloudResponse;
+import com.bc.safecontent.googlecloud.RequestExecutor;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,11 +40,11 @@ public final class SafeSearchService {
     
     private final SingleImageFeatureRequestBuilder singleImgFeatureReq;
 
-    private final VisionRequestExecutor visionReqExec;
+    private final RequestExecutor visionReqExec;
 
     public SafeSearchService() {
         this.singleImgFeatureReq = new SingleImageFeatureRequestBuilder();
-        this.visionReqExec = new VisionRequestExecutor();
+        this.visionReqExec = new RequestExecutor(Endpoints.GOOGLE_VISION_ANNOTATE_IMAGE);
     }
     
     public String requestFlags(String imageurl, Collection<Likelihood> likelihoods, 

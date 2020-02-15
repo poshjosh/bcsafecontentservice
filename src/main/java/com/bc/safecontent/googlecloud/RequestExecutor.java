@@ -31,7 +31,7 @@ import org.json.simple.JSONValue;
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 21, 2018 8:21:32 PM
  */
-public class RequestExecutor {
+public final class RequestExecutor {
     
     private final String endpoint;
 

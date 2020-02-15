@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 /**
  * @author Chinomso Bassey Ikwuagwu on Jan 29, 2019 9:53:58 PM
  */
-public class FlaggingContextImpl implements Serializable, FlaggingContext<String> {
+public final class FlaggingContextImpl implements Serializable, FlaggingContext<String> {
     
     private transient static final Logger LOG = Logger.getLogger(FlaggingContextImpl.class.getName());
 

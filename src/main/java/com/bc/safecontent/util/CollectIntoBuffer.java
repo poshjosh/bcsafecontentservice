@@ -26,7 +26,7 @@ import java.util.Set;
 /**
  * @author Chinomso Bassey Ikwuagwu on Jan 25, 2019 2:43:51 PM
  */
-public class CollectIntoBuffer implements Collector<String, StringBuilder>, Serializable {
+public final class CollectIntoBuffer implements Collector<String, StringBuilder>, Serializable {
     
     private final StringBuilder collection;
     private final String separator;

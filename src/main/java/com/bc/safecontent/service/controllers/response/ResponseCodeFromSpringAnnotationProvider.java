@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author USER
  */
-public class ResponseCodeFromSpringAnnotationProvider implements ResponseCodeProvider{
+public final class ResponseCodeFromSpringAnnotationProvider implements ResponseCodeProvider{
 
     @Override
     public int from(Object o, int resultIfNone) {

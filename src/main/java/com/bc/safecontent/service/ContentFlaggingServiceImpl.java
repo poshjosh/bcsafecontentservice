@@ -38,7 +38,7 @@ import org.springframework.cache.annotation.Cacheable;
 /**
  * @author USER
  */
-public class ContentFlaggingServiceImpl implements ContentFlaggingService{
+public final class ContentFlaggingServiceImpl implements ContentFlaggingService{
 
     private static final Logger LOG = LoggerFactory.getLogger(ContentFlaggingServiceImpl.class);
     

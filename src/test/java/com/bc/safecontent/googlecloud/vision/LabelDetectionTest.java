@@ -16,9 +16,9 @@
 
 package com.bc.safecontent.googlecloud.vision;
 
-import com.bc.safecontent.googlecloud.vision.SingleImageFeatureRequestBuilder;
-import com.bc.safecontent.googlecloud.vision.VisionRequestExecutor;
+import com.bc.safecontent.Endpoints;
 import com.bc.safecontent.googlecloud.GoogleCloudResponse;
+import com.bc.safecontent.googlecloud.RequestExecutor;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +36,7 @@ public class LabelDetectionTest {
                     "https://cloud.google.com/vision/docs/images/ferris-wheel.jpg", 
                     "LABEL_DETECTION");
 
-            final GoogleCloudResponse res = new VisionRequestExecutor().request(
+            final GoogleCloudResponse res = new RequestExecutor(Endpoints.GOOGLE_VISION_ANNOTATE_IMAGE).request(
                     requestJson, 10_000, TimeUnit.MILLISECONDS, null);
             
             if(res.isError()) {

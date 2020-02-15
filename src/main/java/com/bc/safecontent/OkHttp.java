@@ -28,10 +28,9 @@ import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 /**
- *
  * @author Josh
  */
-public class OkHttp {
+public final class OkHttp {
     
     private final OkHttpClient client;
     
