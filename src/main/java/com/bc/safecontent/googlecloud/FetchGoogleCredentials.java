@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * @see https://cloud.google.com/docs/authentication/production#obtaining_and_providing_service_account_credentials_manually
  * @author Chinomso Bassey Ikwuagwu on Nov 21, 2018 12:54:42 PM
  */
-public class FetchGoogleCredentials {
+public final class FetchGoogleCredentials {
 
     private transient static final Logger LOG = Logger.getLogger(FetchGoogleCredentials.class.getName());
     

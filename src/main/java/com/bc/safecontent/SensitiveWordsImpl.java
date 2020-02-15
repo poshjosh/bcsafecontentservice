@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 22, 2018 2:40:21 AM
  */
-public class SensitiveWordsImpl implements SensitiveWords {
+public final class SensitiveWordsImpl implements SensitiveWords {
 
     private transient static final Logger LOG = Logger.getLogger(SensitiveWordsImpl.class.getName());
     

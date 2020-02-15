@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 21, 2018 9:22:15 PM
  */
-public class GoogleCloudResponse {
+public final class GoogleCloudResponse {
 
     private final List<Map> responseList;
     

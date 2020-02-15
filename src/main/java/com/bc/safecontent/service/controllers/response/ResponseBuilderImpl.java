@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author Chinomso Bassey Ikwuagwu on Apr 26, 2019 4:04:45 PM
  */
-public class ResponseBuilderImpl implements ResponseBuilder {
+public final class ResponseBuilderImpl implements ResponseBuilder {
 
     private final Supplier<ResponseImpl> responseSupplier;
     private final ResponseCodeProvider responseCodeProvider;

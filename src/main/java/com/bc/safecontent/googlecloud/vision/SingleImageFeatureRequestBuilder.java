@@ -25,7 +25,7 @@ import org.json.simple.JSONValue;
 /**
  * @author Chinomso Bassey Ikwuagwu on Nov 21, 2018 7:55:09 PM
  */
-public class SingleImageFeatureRequestBuilder {
+public final class SingleImageFeatureRequestBuilder {
     
     public String buildJson(String imageSource, String featureType) {
         
