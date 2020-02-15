@@ -1,0 +1,29 @@
+[INFO] --- maven-jar-plugin:3.1.2:jar (default-jar) @ cometdchatservice ---
+[INFO] Building jar: C:\Users\USER\Documents\NetBeansProjects\cometdchatservice\target\cometdchatservice-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:2.2.2.RELEASE:repackage (repackage) @ cometdchatservice ---
+[INFO] Replacing main artifact with repackaged archive
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:2.2.2.RELEASE:repackage (default) @ cometdchatservice ---
+[INFO] Replacing main artifact with repackaged archive
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:2.2.2.RELEASE:start (pre-integration-test) @ cometdchatservice ---
+[INFO] Attaching agents: []
+Error: Exception thrown by the agent : java.rmi.server.ExportException: Port already in use: 9001; nested exception is: 
+	java.net.BindException: Address already in use: JVM_Bind
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  50.726 s
+[INFO] Finished at: 2020-02-14T20:07:13+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:2.2.2.RELEASE:start (pre-integration-test) on project cometdchatservice: Could not contact Spring Boot application: Failed to retrieve RMIServer stub: javax.naming.CommunicationException [Root exception is java.rmi.ConnectIOException: error during JRMP connection establishment; nested exception is: 
+[ERROR] 	java.io.EOFException]
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+

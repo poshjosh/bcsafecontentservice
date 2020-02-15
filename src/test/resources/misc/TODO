@@ -1,0 +1,5 @@
+Write tests to show cache is working
+
+http://localhost:8093/flag?text=I+have+a+pussy.,She+is+fiesty.
+http://localhost:8093/flag?text=I+have+a+pussy.&text=She+is+fiesty.
+http://localhost:8093/shutdown?delay=3000
