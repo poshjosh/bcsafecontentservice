@@ -49,8 +49,9 @@ public interface ContentFlaggingService {
     
     /**
      * This call may invoke third party services.
+     * The result is cached for use on subsequent calls.
      * @param content The content to flag
-     * @param timeoutMillis Spend at most this milliseconds 
+     * @param timeoutMillis Operation will last at most this milliseconds
      * @return The flags, if the content is flagged as unsafe. E.g of flags = 
      * <code>adult,violence,racy,graphic,medical,spoof</code>; empty text if the 
      * content is flagged as safe or <code>null</code> if the safety or otherwise
