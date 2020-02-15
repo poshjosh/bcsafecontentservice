@@ -1,17 +1,46 @@
+### developer addition ###
+misc/
+logs/
+*.sql
 !META-INF/
 !META-INF/*
 META-INF/secure/*
 safecontentflags/*
 
-nbproject/
+HELP.md
 target/
-misc/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
 
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+nbproject/
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
 nb-configuration.xml
 nbactions.xml
 
-#*.properties
-*.sql
+### VS Code ###
+.vscode/
 
 # Compiled class file
 *.class
