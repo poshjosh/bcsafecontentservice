@@ -21,5 +21,4 @@ package com.bc.safecontent.service.controllers;
 public interface Endpoints {
     String ISSAFE = "/issafe";
     String FLAG = "/flag";
-    String SHUTDOWN = "/shutdown";
 }
