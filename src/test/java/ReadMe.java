@@ -1,4 +1,4 @@
-package com.bc.safecontent;
+
 
 import com.bc.safecontent.service.ContentFlaggingService;
 import com.bc.safecontent.service.ContentImpl;
