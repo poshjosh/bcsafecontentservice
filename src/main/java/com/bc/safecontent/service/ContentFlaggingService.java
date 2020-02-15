@@ -47,6 +47,15 @@ public interface ContentFlaggingService {
         List<String> getText();
     }
     
+    /**
+     * This call may invoke third party services.
+     * @param content The content to flag
+     * @param timeoutMillis Spend at most this milliseconds 
+     * @return The flags, if the content is flagged as unsafe. E.g of flags = 
+     * <code>adult,violence,racy,graphic,medical,spoof</code>; empty text if the 
+     * content is flagged as safe or <code>null</code> if the safety or otherwise
+     * of the content could not be ascertained.
+     */
     String flag(Content content, long timeoutMillis);
     
     State getState();
