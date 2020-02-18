@@ -16,6 +16,9 @@
     <name>${project.artifactId}</name>
     <description>API for checking the safety of content vis-a-vis violence, adult, profanity etc</description>
 
+    <properties>
+        <app.port>8093</app.port>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
