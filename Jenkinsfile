@@ -9,8 +9,8 @@ pipeline {
             steps {
                 script{
                     bat '''
-                    echo 'M2_HOME = %M2_HOME%'
-                    echo 'JAVA_HOME = %JAVA_HOME%'
+                        echo 'M2_HOME = %M2_HOME%'
+                        echo 'JAVA_HOME = %JAVA_HOME%'
                     '''
                 }
             }
