@@ -12,7 +12,7 @@ library(
     )
 )
 
-completePipeline(
+pipelineForJavaSpringBoot(
         appPort : '8093',
         appEndpoint : '/actuator/health',
         mainClass : 'com.bc.safecontent.SafeContentApplication'
